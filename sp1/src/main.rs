@@ -8,7 +8,7 @@ use utils::{benchmark, size};
 const FIBONACCI_ELF: &[u8] = include_bytes!("../fibonacci/elf/riscv32im-succinct-zkvm-elf");
 const SHA2_ELF: &[u8] = include_bytes!("../sha2/elf/riscv32im-succinct-zkvm-elf");
 const SHA2_CHAIN_ELF: &[u8] = include_bytes!("../sha2-chain/elf/riscv32im-succinct-zkvm-elf");
-const SHA3_CHAIN_ELF: &[u8] = include_bytes!("../sha2-chain/elf/riscv32im-succinct-zkvm-elf");
+const SHA3_CHAIN_ELF: &[u8] = include_bytes!("../sha3-chain/elf/riscv32im-succinct-zkvm-elf");
 const SHA3_ELF: &[u8] = include_bytes!("../sha3/elf/riscv32im-succinct-zkvm-elf");
 const BIGMEM_ELF: &[u8] = include_bytes!("../bigmem/elf/riscv32im-succinct-zkvm-elf");
 
@@ -22,22 +22,22 @@ fn main() {
     // let shard_sizes = [1 << 20, 1 << 21, 1 << 22, 1 << 23, /* 1 << 24 */];
     benchmark_with_shard_size(benchmark_sha2_chain, &iters, &shard_sizes, "../benchmark_outputs/sha2_chain_sp1_1_shard.csv", "iters");
 
-    // 2 Shards
-    let iters = [230, 460, 920, 1840, 3680];
-    let shard_sizes = [1 << 19, 1 << 20, 1 << 21, 1 << 22, 1 << 23];
-    benchmark_with_shard_size(benchmark_sha2_chain, &iters, &shard_sizes, "../benchmark_outputs/sha2_chain_sp1_2_shard.csv", "iters");
+    // // 2 Shards
+    // let iters = [230, 460, 920, 1840, 3680];
+    // let shard_sizes = [1 << 19, 1 << 20, 1 << 21, 1 << 22, 1 << 23];
+    // benchmark_with_shard_size(benchmark_sha2_chain, &iters, &shard_sizes, "../benchmark_outputs/sha2_chain_sp1_2_shard.csv", "iters");
 
-    // 4 Shards
-    let shard_sizes = [1 << 18, 1 << 19, 1 << 20, 1 << 21, 1 << 22];
-    benchmark_with_shard_size(benchmark_sha2_chain, &iters, &shard_sizes, "../benchmark_outputs/sha2_chain_sp1_4_shard.csv", "iters");
+    // // 4 Shards
+    // let shard_sizes = [1 << 18, 1 << 19, 1 << 20, 1 << 21, 1 << 22];
+    // benchmark_with_shard_size(benchmark_sha2_chain, &iters, &shard_sizes, "../benchmark_outputs/sha2_chain_sp1_4_shard.csv", "iters");
 
-    // 8 Shards
-    let shard_sizes = [1 << 17, 1 << 18, 1 << 19, 1 << 20, 1 << 21];
-    benchmark_with_shard_size(benchmark_sha2_chain, &iters, &shard_sizes, "../benchmark_outputs/sha2_chain_sp1_8_shard.csv", "iters");
+    // // 8 Shards
+    // let shard_sizes = [1 << 17, 1 << 18, 1 << 19, 1 << 20, 1 << 21];
+    // benchmark_with_shard_size(benchmark_sha2_chain, &iters, &shard_sizes, "../benchmark_outputs/sha2_chain_sp1_8_shard.csv", "iters");
 
-    // 16 Shards
-    let shard_sizes = [1 << 16, 1 << 17, 1 << 18, 1 << 19, 1 << 20];
-    benchmark_with_shard_size(benchmark_sha2_chain, &iters, &shard_sizes, "../benchmark_outputs/sha2_chain_sp1_16_shard.csv", "iters");
+    // // 16 Shards
+    // let shard_sizes = [1 << 16, 1 << 17, 1 << 18, 1 << 19, 1 << 20];
+    // benchmark_with_shard_size(benchmark_sha2_chain, &iters, &shard_sizes, "../benchmark_outputs/sha2_chain_sp1_16_shard.csv", "iters");
 
     // benchmark(benchmark_sha3_chain, &iters, "../benchmark_outputs/sha3_chain_sp1.csv", "iters");
 

@@ -1,5 +1,5 @@
 bench-all:
-	make bench-jolt
+	# make bench-jolt
 	make bench-sp1
 	make bench-risczero
 
@@ -8,7 +8,8 @@ bench-jolt:
 
 bench-sp1:
 	make build-sp1
-	cd sp1 && RUSTFLAGS="-C target-cpu=native" cargo run --release --features nightly-features
+	# cd sp1 && RUSTFLAGS="-C target-cpu=native" cargo run --release --features nightly-features
+	cd sp1 && RUSTFLAGS="-C target-cpu=native" cargo run --release
 
 build-sp1:
 	cd sp1/fibonacci && cargo prove build
