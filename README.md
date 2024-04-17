@@ -23,6 +23,21 @@ Follow the instructions outputted by this command then run:
 sp1up
 ```
 
+## Install zkWASM
+
+It needs several tools:
+
+wasm-opt
+```bash
+sudo apt install binaryen
+```
+
+wasm-pakc
+```bash
+curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+```
+
+
 ## Running
 To run all benchmarks run:
 ```bash
