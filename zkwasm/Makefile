@@ -1,9 +1,10 @@
 
-CLI="/home/frank/projects/zkWasm/target/release/delphinus-cli"
+export ZKWASMCLI=/home/frank/projects/zkWasm/target/release/delphinus-cli
 GUEST="fibonacci-guest"
 INPUT=10
+K=18
 
-all: build subfolder prepare prove verify
+all: run
 
 build:
 	cargo build --release --features cuda
@@ -13,13 +14,16 @@ subfolder:
 
 prepare:
 	rm -rf params output
-	${CLI} --host standard -k 18 --function zkmain --param ./params --output ./output --wasm ${GUEST}/target/guest.wasm setup
+	${ZKWASMCLI} --host standard -k ${K} --function zkmain --param ./params --output ./output --wasm ${GUEST}/target/guest.wasm setup
 
 prove:
-	${CLI} --host default -k 18 --function zkmain --output ./output --param ./params --wasm ${GUEST}/target/guest.wasm single-prove --public ${INPUT}:i64 
+	${ZKWASMCLI} --host default -k ${K} --function zkmain --output ./output --param ./params --wasm ${GUEST}/target/guest.wasm single-prove --public ${INPUT}:i64 
 
 verify:
-	${CLI} --host default -k 18 --function zkmain --output ./output --param ./params --wasm ${GUEST}/target/guest.wasm single-verify
+	${ZKWASMCLI} --host default -k ${K} --function zkmain --output ./output --param ./params --wasm ${GUEST}/target/guest.wasm single-verify
+
+run:
+	RUST_BACKTRACE=1 cargo run --release
 
 clean:
 	cd ${GUEST} && $(MAKE) clean
