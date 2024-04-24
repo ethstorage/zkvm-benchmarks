@@ -1,10 +1,10 @@
 
 export ZKWASMCLI=/home/frank/projects/zkWasm/target/release/delphinus-cli
-GUEST="fibonacci-guest"
+GUEST="sha2-guest"
 INPUT=10
-K=18
+K=23
 
-all: run
+all: subfolder prepare prove verify
 
 build:
 	cargo build --release --features cuda

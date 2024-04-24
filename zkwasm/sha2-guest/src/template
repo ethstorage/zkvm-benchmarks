@@ -1,0 +1,20 @@
+#![no_std]
+#![no_main]
+use zkwasm_rust_sdk::wasm_input;
+use zkwasm_rust_sdk::require;
+use sha2::{Sha256, Digest};
+use wasm_bindgen::prelude::wasm_bindgen;
+
+fn sha2(input: &[u8]) -> [u8; 32] {
+    let mut hasher = Sha256::new();
+    hasher.update(input);
+    let result = hasher.finalize();
+    Into::<[u8; 32]>::into(result)
+}
+
+#[wasm_bindgen]
+pub fn zkmain() {
+    let input = [5u8;{{INPUT_SIZE}}]; 
+    let result = sha2(&input);
+    unsafe {require(result[0] >= 0)};
+}

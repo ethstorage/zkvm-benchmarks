@@ -8,6 +8,7 @@ use std::{
     time::{Duration, Instant},
     usize,
 };
+use std::fs;
 use utils::benchmark;
 
 const ZKWASM: &str = "ZKWASMCLI";
@@ -50,11 +51,19 @@ fn format_image_dir(guest_name: &str) -> String {
 fn main() {
     // let ns = [100, 1000, 10000, 50000];
     let ns = [100];
+    // benchmark(
+    //     bench_fibonacci,
+    //     &ns,
+    //     "../benchmark_outputs/fiboancci_zkwasm.csv",
+    //     "n",
+    // );
+    // let lengths = [32, 256, 512, 1024, 2048];
+    let lengths = [32];
     benchmark(
-        bench_fibonacci,
-        &ns,
-        "../benchmark_outputs/fiboancci_zkwasm.csv",
-        "n",
+        bench_sha2,
+        &lengths,
+        "../benchmark_outputs/sha2_zkwasm.csv",
+        "byte length",
     );
 }
 
@@ -106,14 +115,16 @@ fn bench_sha3_chain(iters: u32) -> (Duration, usize) {
 }
 
 fn bench_sha2(num_bytes: usize) -> (Duration, usize) {
+    let k: usize = 23;
     let guest = "sha2-guest";
     assert!(GUESTS.contains(&guest));
-    prepare(num_bytes as u64, K, guest);
+    meta_build(guest, num_bytes);
+    prepare(num_bytes as u64, k, guest);
     let start = Instant::now();
-    prove(num_bytes as u64, K, guest);
+    prove(num_bytes as u64, k, guest);
     let end = Instant::now();
     let size = std::fs::metadata(PROOF_FILE).unwrap().len() as usize;
-    verify(num_bytes as u64, K, guest);
+    verify(num_bytes as u64, k, guest);
 
     (end.duration_since(start), size)
 }
@@ -142,6 +153,45 @@ fn bench_bigmem(num_bytes: usize) -> (Duration, usize) {
     verify(num_bytes as u64, K, guest);
 
     (end.duration_since(start), size)
+}
+
+fn meta_build(guest_name: &'static str, input_size: usize) {
+    let cargo_manifest_dir = env!("CARGO_MANIFEST_DIR");
+
+    // Create a PathBuf and push the relative path to the file
+    let mut file_path = PathBuf::from(cargo_manifest_dir);
+    file_path.push(guest_name);
+    file_path.push("src");
+    file_path.push("template");
+
+    let template_path = file_path.to_str().unwrap_or("Invalid path");
+    println!("Template path: {}", template_path);
+    let template = fs::read_to_string(template_path).expect("Failed to read guest_template.rs");
+
+    // Substitute the {{INPUT_SIZE}} placeholder with the actual input size
+    let guest_code = template.replace("{{INPUT_SIZE}}", &input_size.to_string());
+
+    // write as lib.rs
+    file_path.pop();
+    file_path.push("lib.rs");
+    println!("Guest code path {}", file_path.display());
+    fs::write(file_path.clone(), guest_code).expect("Failed to write guest lib.rs");
+
+    // get into the guest directory
+    file_path.pop();
+    file_path.pop();
+
+    println!("Guest directory: {}", file_path.display());
+    // run make on the guest directory
+    let status = Command::new("make")
+        .current_dir(file_path)
+        .status()
+        .expect("Failed to run make command");
+
+    if !status.success() {
+        panic!("Make command failed");
+    }
+
 }
 
 fn prepare(_: u64, k: usize, guest: &'static str) {
@@ -229,5 +279,18 @@ fn verify(_: u64, k: usize, guest: &str) {
 
     if !status.success() {
         panic!("Verify command failed");
+    }
+}
+
+// test meta_build
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_meta_build() {
+        let guest = "sha2-guest";
+        let input_size = 512;
+        meta_build(guest, input_size);
     }
 }
